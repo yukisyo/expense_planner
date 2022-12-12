@@ -21,38 +21,44 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Platform.isIOS
-        ? CupertinoApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: const CupertinoThemeData(
-              primaryColor: Colors.pink,
-            ),
-            home: MyHomePage(),
-          )
-        : MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            theme: ThemeData(
-              primarySwatch: Colors.pink,
-              fontFamily: 'Quicksand',
-              textTheme: ThemeData.light().textTheme.copyWith(
-                    titleMedium: const TextStyle(
-                      fontFamily: 'Quicksand',
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-              buttonTheme: const ButtonThemeData(buttonColor: Colors.white),
-              appBarTheme: const AppBarTheme(
-                titleTextStyle: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontFamily: 'Quicksand',
-                ),
+    return Platform.isIOS ? buildCupertinoApp() : buildMaterialApp();
+  }
+
+  MaterialApp buildMaterialApp() {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              titleMedium: const TextStyle(
+                fontFamily: 'Quicksand',
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            home: MyHomePage(),
-          );
+        buttonTheme: const ButtonThemeData(buttonColor: Colors.white),
+        appBarTheme: const AppBarTheme(
+          titleTextStyle: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontFamily: 'Quicksand',
+          ),
+        ),
+      ),
+      home: MyHomePage(),
+    );
+  }
+
+  CupertinoApp buildCupertinoApp() {
+    return CupertinoApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Flutter Demo',
+      theme: const CupertinoThemeData(
+        primaryColor: Colors.pink,
+      ),
+      home: MyHomePage(),
+    );
   }
 }
 
@@ -106,6 +112,35 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
+  Widget _buildLandscapeContent() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('Show Chart'),
+        Switch.adaptive(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            }),
+      ],
+    );
+  }
+
+  List<Widget> _buildProtraitContent(MediaQueryData mediaQuery,
+      PreferredSizeWidget appBar, Widget txtListWidget) {
+    return [
+      SizedBox(
+          height: (mediaQuery.size.height -
+                  appBar.preferredSize.height -
+                  mediaQuery.padding.top) *
+              0.3,
+          child: Chart(_recentTransactions)),
+      txtListWidget
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
@@ -147,32 +182,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text('Show Chart'),
-                  Switch.adaptive(
-                      value: _showChart,
-                      onChanged: (val) {
-                        setState(() {
-                          _showChart = val;
-                        });
-                      }),
-                ],
-              ),
+            if (isLandscape) _buildLandscapeContent(),
             if (!isLandscape)
-              Column(
-                children: [
-                  SizedBox(
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.3,
-                      child: Chart(_recentTransactions)),
-                  txtListWidget
-                ],
-              ),
+              ..._buildProtraitContent(mediaQuery, appBar, txtListWidget),
             if (isLandscape)
               if (_showChart)
                 SizedBox(
