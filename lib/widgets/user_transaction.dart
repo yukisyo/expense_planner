@@ -1,7 +1,4 @@
-import 'package:expense_planner/widgets/transaction_list.dart';
 import 'package:flutter/material.dart';
-import '../models/transaction.dart';
-import 'new_transaction.dart';
 
 class UserTransaction extends StatefulWidget {
   const UserTransaction({Key? key}) : super(key: key);
