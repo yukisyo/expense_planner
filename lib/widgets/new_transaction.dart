@@ -4,7 +4,9 @@ import 'package:intl/intl.dart';
 class NewTransaction extends StatefulWidget {
   void Function({double amount, String title, DateTime date}) addTx;
 
-  NewTransaction(this.addTx, {super.key});
+  NewTransaction(this.addTx, {super.key}) {
+    print('something');
+  }
 
   @override
   State<NewTransaction> createState() => _NewTransactionState();
@@ -14,6 +16,24 @@ class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
   DateTime _dateValue = DateTime.now();
+
+  @override
+  void initState() {
+    print('initState');
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    print('didUpdateWidget');
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    print('dispose');
+    super.dispose();
+  }
 
   void submitData() {
     final String enteredTitle = titleController.text;
